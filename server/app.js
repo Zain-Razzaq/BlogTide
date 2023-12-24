@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import mongoose from "mongoose";
 
 import authRoutes from "./routes/authRoutes.js";
 import blogsRoutes from "./routes/blogsRoutes.js";
@@ -22,7 +23,13 @@ app.use(
 );
 
 // Database connection
-export const connection = connectToDatabase();
+mongoose.connect(process.env.MONGODB_CONNECTION_URL);
+
+mongoose.connection.on("connected", () => {
+  console.log("Connected to the MongoDB server");
+});
+
+export const connection = null;
 
 app.use("/blog", blogsRoutes);
 

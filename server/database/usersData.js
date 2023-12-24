@@ -1,32 +1,18 @@
-import { connection } from "../app.js";
+import UserModel from "../models/Users.js";
 
-
-const addUser = async ({ id, name, email, hashedPassword, role }) => {
-  connection.query(
-    "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)",
-    [id, name, email, hashedPassword, role],
-    (error, result) => {
-      if (error) {
-        return error;
-      }
-    }
-  );
+const addUser = async ({ name, email, hashedPassword, role }) => {
+  const user = await UserModel.create({
+    name,
+    email,
+    hashedPassword,
+    role,
+  });
+  return user;
 };
 
 const findUser = async (email) => {
-  return new Promise((resolve, reject) => {
-    connection.query(
-      "SELECT * FROM users WHERE email = ?",
-      [email],
-      (error, result) => {
-        if (error) {
-          return reject(error);
-        } else {
-          return resolve(JSON.stringify(result[0]));
-        }
-      }
-    );
-  });
+  const user = await UserModel.findOne({ email });
+  return user;
 };
 
 export { addUser, findUser };

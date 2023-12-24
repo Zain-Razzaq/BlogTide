@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { nanoid } from "nanoid";
 
 import { addUser, findUser } from "../database/usersData.js";
 dotenv.config();
@@ -13,38 +12,33 @@ export const register = async (req, res) => {
 
     // Check if the user exists
     const oldUser = await findUser(email);
-    if (oldUser) {
+    if (oldUser)
       return res.status(409).send({ message: "User already exists" });
-    }
+
     // Encrypt user password
     const encryptedPassword = await bcrypt.hash(password, 10);
     // Create new user
     const user = {
-      id: nanoid(process.env.NANOID_LENGTH),
       name,
       email,
       hashedPassword: encryptedPassword,
-      role: "user",
     };
 
     // Save user in the database
     await addUser(user);
 
     // Create token
-    const JWTToken = jwt.sign(
-      { id: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const JWTToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.cookie("userToken", JWTToken, {
       httpOnly: true,
       maxAge: 3600000,
-      secure: false,
     });
 
     res.status(200).send({
-      userId: user.id,
+      userId: user._id,
       name: user.name,
       email: user.email,
       isAdmin: user.role === "admin",
@@ -61,29 +55,23 @@ export const login = async (req, res) => {
     // Check if the user exists
     let user = await findUser(email);
 
-    if (user) user = JSON.parse(user);
-    else return res.status(404).send({ message: "User doesn't exist" });
+    if (!user) return res.status(404).send({ message: "User doesn't exist" });
 
     // Validate password
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordCorrect)
+    if (!(await bcrypt.compare(password, user.hashedPassword)))
       return res.status(400).send({ message: "Invalid credentials" });
 
     // Create token
-    const JWTToken = jwt.sign(
-      { id: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const JWTToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.cookie("userToken", JWTToken, {
       httpOnly: true,
-      secure: false,
       maxAge: 3600000,
     });
     res.status(200).json({
-      userId: user.id,
+      userId: user._id,
       name: user.name,
       email: user.email,
       isAdmin: user.role === "admin",
