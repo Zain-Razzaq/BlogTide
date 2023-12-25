@@ -30,7 +30,7 @@ export const blogsApi = createApi({
       query: (blogId) => `${blogId}`,
 
       transformResponse: (response) => {
-        response.lastUpdated = getDateInFormat(response.lastUpdated);
+        response.updatedAt = getDateInFormat(response.updatedAt);
         return response;
       },
 

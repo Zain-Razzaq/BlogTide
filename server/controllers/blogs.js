@@ -1,32 +1,27 @@
-import { nanoid } from "nanoid";
-import camelcaseKeys from "camelcase-keys";
-
+import { tokenValidation } from "./userTokenValidation.js";
 import {
-  getTotalNumberOfBlogs,
-  getBlogsDataForHomePage,
-  getTotalNumberOfBlogsForCurrentUser,
+  getRecentBlogs,
   getBlogsDataForCurrentUser,
   getBlogDataById,
-  createBlogInDatabase,
-  deleteBlogFromDatabase,
-  updateBlogInDatabase,
-  getBlogAuthorByBlogId,
-  getTotalNumberOfBlogsForSearchQuery,
   searchBlogsInDatabase,
-} from "../database/blogsData.js";
-import { tokenValidation } from "./userTokenValidation.js";
+  createBlogInDatabase,
+  getBlogAuthorByBlogId,
+  updateBlogInDatabase,
+  deleteBlogFromDatabase,
+} from "../database/blogs.js";
 
 export const getBlogsForHomePage = async (req, res) => {
   try {
     const currentUser = tokenValidation(req.cookies?.userToken);
     if (currentUser) {
-      const totalBlogs = await getTotalNumberOfBlogs();
-      if (totalBlogs) {
-        const blogs = await getBlogsDataForHomePage(req.params.pageNumber);
-        res
-          .status(200)
-          .send({ blogs: camelcaseKeys(JSON.parse(blogs)), totalBlogs });
-      } else res.status(404).send({ message: "No blogs found" });
+      const currentPage = req.params.currentPage || 0;
+      const limit = req.params.limit || 10;
+      const skip = currentPage * limit;
+
+      const { blogs, totalBlogs } = await getRecentBlogs(skip, limit);
+
+      const totalPages = Math.ceil(totalBlogs / limit);
+      res.status(200).send({ blogs, currentPage, totalPages });
     } else res.status(401).send({ message: "Unauthorized Access" });
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -37,15 +32,17 @@ export const getBlogsForCurrentUser = async (req, res) => {
   try {
     const currentUser = tokenValidation(req.cookies?.userToken);
     if (currentUser) {
-      const totalBlogs = await getTotalNumberOfBlogsForCurrentUser(
-        currentUser.id
+      const currentPage = req.params.currentPage || 0;
+      const limit = req.params.limit || 10;
+      const skip = currentPage * limit;
+
+      const { blogs, totalBlogs } = await getBlogsDataForCurrentUser(
+        currentUser.id,
+        skip,
+        limit
       );
-      if (totalBlogs) {
-        const blogs = await getBlogsDataForCurrentUser(currentUser.id);
-        res
-          .status(200)
-          .send({ blogs: camelcaseKeys(JSON.parse(blogs)), totalBlogs });
-      } else res.status(404).send({ message: "No blogs found" });
+      const totalPages = Math.ceil(totalBlogs / limit);
+      res.status(200).send({ blogs, currentPage, totalPages });
     } else res.status(401).send({ message: "Unauthorized Access" });
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -59,7 +56,7 @@ export const getBlogById = async (req, res) => {
       const { blogId } = req.params;
       const blog = await getBlogDataById(blogId);
       if (blog) {
-        res.status(200).send(camelcaseKeys(JSON.parse(blog)));
+        res.status(200).send(blog);
       } else res.status(404).send({ message: "Blog not found" });
     } else
       res
@@ -70,21 +67,40 @@ export const getBlogById = async (req, res) => {
   }
 };
 
+export const searchBlogs = async (req, res) => {
+  try {
+    const currentUser = tokenValidation(req.cookies?.userToken);
+    if (currentUser) {
+      const { searchQuery, currentPage, limit } = req.query;
+      const skip = currentPage * limit;
+
+      const { blogs, totalBlogs } = await searchBlogsInDatabase(
+        searchQuery,
+        skip,
+        limit
+      );
+      const totalPages = Math.ceil(totalBlogs / limit);
+      res.status(200).send({ blogs, currentPage, totalPages });
+    } else res.status(401).send({ message: "Unauthorized Access" });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+/// rfklf
+
 export const createBlog = async (req, res) => {
   try {
     const currentUser = tokenValidation(req.cookies?.userToken);
     if (currentUser) {
       const { title, content, readTime } = req.body;
-      const blog = {
-        id: nanoid(),
+
+      const isCreated = await createBlogInDatabase({
         title,
         content,
         readTime,
-        writtenAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString(),
         writterId: currentUser.id,
-      };
-      const isCreated = await createBlogInDatabase(blog);
+      });
       if (isCreated)
         res.status(201).send({ message: "Blog created successfully" });
       else res.status(500).send({ message: "Unable to create blog" });
@@ -100,10 +116,9 @@ export const deleteBlog = async (req, res) => {
     if (currentUser) {
       const { blogId } = req.params;
       const writterId = await getBlogAuthorByBlogId(blogId);
-      if (writterId !== currentUser.id && currentUser.role !== "admin")
+      if (writterId != currentUser.id && !currentUser.isAdmin)
         return res.status(401).send({ message: "Unauthorized Access" });
-      const isDeleted = await deleteBlogFromDatabase(blogId);
-      if (isDeleted)
+      if (await deleteBlogFromDatabase(blogId))
         res.status(200).send({ message: "Blog deleted successfully" });
       else res.status(500).send({ message: "Unable to delete blog" });
     } else res.status(401).send({ message: "Unauthorized Access" });
@@ -118,7 +133,7 @@ export const updateBlog = async (req, res) => {
     if (currentUser) {
       const { blogId } = req.params;
       const writterId = await getBlogAuthorByBlogId(blogId);
-      if (writterId !== currentUser.id && currentUser.role !== "admin")
+      if (writterId != currentUser.id && !currentUser.isAdmin)
         return res.status(401).send({ message: "Unauthorized Access" });
       const { title, content, readTime } = req.body;
       const blog = {
@@ -126,37 +141,10 @@ export const updateBlog = async (req, res) => {
         title,
         content,
         readTime,
-        lastUpdated: new Date().toISOString(),
-        writter_id: currentUser.id,
       };
-      const isUpdated = await updateBlogInDatabase(blog);
-      if (isUpdated)
+      if (await updateBlogInDatabase(blog))
         res.status(200).send({ message: "Blog updated successfully" });
       else res.status(500).send({ message: "Unable to update blog" });
-    } else res.status(401).send({ message: "Unauthorized Access" });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-};
-
-export const searchBlogs = async (req, res) => {
-  try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
-    if (currentUser) {
-      const { searchQuery, pageNumber } = req.query;
-      const totalBlogs = await getTotalNumberOfBlogsForSearchQuery(searchQuery);
-      if (totalBlogs) {
-        const searchedBlogs = await searchBlogsInDatabase(
-          searchQuery,
-          pageNumber
-        );
-        if (searchedBlogs) {
-          res.status(200).send({
-            blogs: camelcaseKeys(JSON.parse(searchedBlogs)),
-            totalBlogs,
-          });
-        } else res.status(404).send({ message: "Unable to load Blogs" });
-      } else res.status(404).send({ message: "No blogs found" });
     } else res.status(401).send({ message: "Unauthorized Access" });
   } catch (error) {
     res.status(500).send({ message: error.message });

@@ -26,7 +26,7 @@ const BlogPage = () => {
   const currentUser = JSON.parse(localStorage.getItem("userInfo"));
 
   const isEditable =
-    currentUser?.userId === data?.writterId || currentUser?.isAdmin;
+    currentUser?.userId === data?.author._id || currentUser?.isAdmin;
 
   useEffect(() => {
     deletingBlog ? toast.loading("Deleting Blog") : toast.dismiss();
@@ -91,9 +91,9 @@ const BlogPage = () => {
               </div>
               <div className="text-md font-lora mt-3 flex justify-between flex-wrap">
                 <p>
-                  By {data?.author} • {data?.readTime} Min read
+                  By {data?.author.name} • {data?.readTime} Min read
                 </p>
-                <p>Last update : {data.lastUpdated}</p>
+                <p>Last update : {data.updatedAt}</p>
               </div>
               <p className="mt-3 text-lg font-serif text-justify whitespace-pre-line">
                 {data?.content}

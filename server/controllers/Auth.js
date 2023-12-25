@@ -28,9 +28,13 @@ export const register = async (req, res) => {
     await addUser(user);
 
     // Create token
-    const JWTToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const JWTToken = jwt.sign(
+      { id: user.id, isAdmin: user.role === "admin" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     res.cookie("userToken", JWTToken, {
       httpOnly: true,
@@ -62,9 +66,13 @@ export const login = async (req, res) => {
       return res.status(400).send({ message: "Invalid credentials" });
 
     // Create token
-    const JWTToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const JWTToken = jwt.sign(
+      { id: user.id, isAdmin: user.role === "admin" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     res.cookie("userToken", JWTToken, {
       httpOnly: true,

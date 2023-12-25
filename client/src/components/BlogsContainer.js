@@ -41,13 +41,13 @@ const BlogsContainer = ({ isExplore }) => {
           ) : (
             <>
               <SearchBar handelFormSubmit={handelSearchFormSubmit} />
-              {blogs?.map(({ id, title, content, author, readTime }) => (
+              {blogs?.map(({ _id, title, content, author, readTime }) => (
                 <BlogCard
-                  key={id}
-                  id={id}
+                  key={_id}
+                  id={_id}
                   title={title}
                   content={content}
-                  author={author}
+                  author={author.name}
                   readTime={readTime}
                 />
               ))}

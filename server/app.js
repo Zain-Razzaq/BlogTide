@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 
 import authRoutes from "./routes/authRoutes.js";
 import blogsRoutes from "./routes/blogsRoutes.js";
-import connectToDatabase from "./database/connection.js";
 import cookieParser from "cookie-parser";
 import validateUser from "./controllers/userTokenValidation.js";
 
