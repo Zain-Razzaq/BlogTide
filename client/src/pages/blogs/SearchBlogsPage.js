@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, generatePath } from "react-router-dom";
 
 import { useSearchBlogsQuery } from "../../store/api/blogsApi";
@@ -14,7 +14,7 @@ const SearchBlogsPage = () => {
   const [pageNumber, setPageNumber] = useState(0);
   const { searchQuery } = useParams();
   const {
-    data: { blogs, totalBlogs } = {},
+    data: { blogs, currentPage, totalPages } = {},
     error,
     isLoading,
   } = useSearchBlogsQuery({
@@ -22,7 +22,9 @@ const SearchBlogsPage = () => {
     pageNumber: 0,
   });
 
-  const totalPages = Math.ceil(totalBlogs / 10);
+  useEffect(() => {
+    if (currentPage) setPageNumber(currentPage);
+  }, [currentPage]);
 
   const handelSearchFormSubmit = ({ searchQuery }) =>
     navigate(generatePath(SEARCH_BLOGS_URL, { searchQuery }));
@@ -47,13 +49,13 @@ const SearchBlogsPage = () => {
           <div className="text-xl flex justify-center">{error}</div>
         ) : (
           <>
-            {blogs?.map(({ id, title, content, author, readTime }) => (
+            {blogs?.map(({ _id, title, content, author, readTime }) => (
               <BlogCard
-                key={id}
-                id={id}
+                key={_id}
+                id={_id}
                 title={title}
                 content={content}
-                author={author}
+                author={author.name}
                 readTime={readTime}
               />
             ))}

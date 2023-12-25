@@ -50,7 +50,7 @@ const BlogPage = () => {
           <Loader />
         </div>
       ) : (
-        <div className=" bg-customColor3 px-[8%] w-10/12 my-10 mx-auto flex flex-col items-center">
+        <div className=" bg-customColor3 px-[8%]  md:w-10/12 my-10 mx-auto flex flex-col items-center">
           {blogError ? (
             <div className=" text-xl text-customColor1 ">{blogError}</div>
           ) : (
@@ -82,10 +82,10 @@ const BlogPage = () => {
                 </div>
               )}
               <div className="h-[150px] flex items-center  relative">
-                <span className="text-[14rem] opacity-40 leading-[8rem] absolute top-0 -left-10 select-none">
+                <span className="text-[10rem] md:text-[14rem] ml-1 opacity-40 leading-[8rem] absolute top-0 -left-10 select-none">
                   {data.title && data?.title[0]}
                 </span>
-                <h2 className="text-4xl font-lora font-semibold line-clamp-3 select-none">
+                <h2 className="text-2xl md:text-4xl font-lora font-semibold overflow-hidden select-none">
                   {data?.title}
                 </h2>
               </div>

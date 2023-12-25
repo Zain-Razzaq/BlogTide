@@ -14,16 +14,16 @@ import SearchBar from "./SearchBar";
 
 const BlogsContainer = ({ isExplore }) => {
   const navigate = useNavigate();
-  const [trigger, { data: { blogs, totalBlogs } = {}, error, isLoading }] =
+  const [trigger, { data: { blogs, currentPage, totalPages } = {}, error, isLoading }] =
     useLazyGetBlogsQuery();
   const [pageNumber, setPageNumber] = useState(0);
 
   const blogURL = isExplore ? getExploreBlogsURL() : getCurrentUserBlogsURL();
-  const totalPages = Math.ceil(totalBlogs / 10);
 
   useEffect(() => {
     trigger({ blogURL, pageNumber });
-  }, [blogURL, isExplore, pageNumber, trigger]);
+    setPageNumber(currentPage);
+  }, [blogURL, currentPage, isExplore, pageNumber, trigger]);
 
   useEffect(() => setPageNumber(0), [isExplore]);
 
@@ -31,7 +31,7 @@ const BlogsContainer = ({ isExplore }) => {
     navigate(generatePath(SEARCH_BLOGS_URL, { searchQuery }));
 
   return (
-    <div className=" w-8/12 mt-5 mx-auto text-customColor1 flex flex-col items-center">
+    <div className="w-10/12 lg:w-8/12 mt-5 mx-auto text-customColor1 flex flex-col items-center">
       {isLoading ? (
         <Loader />
       ) : (

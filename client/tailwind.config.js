@@ -10,9 +10,9 @@ module.exports = {
         lora: ["Lora", "serif"],
       },
       colors: {
-        customColor1: "#102C57",
-        customColor2: "#EADBC8",
-        customColor3: "#DAC0A3",
+        customColor1: "#163020",
+        customColor2: "#B6C4B6",
+        customColor3: "#eee",
       },
     },
   },

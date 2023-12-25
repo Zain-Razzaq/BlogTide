@@ -79,7 +79,7 @@ export const searchBlogs = async (req, res) => {
         skip,
         limit
       );
-      const totalPages = Math.ceil(totalBlogs / limit);
+      const totalPages = Math.ceil(totalBlogs / limit) || 1;
       res.status(200).send({ blogs, currentPage, totalPages });
     } else res.status(401).send({ message: "Unauthorized Access" });
   } catch (error) {

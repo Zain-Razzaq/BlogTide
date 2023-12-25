@@ -22,15 +22,15 @@ const HomePage = () => {
 
   return (
     <div className="flex">
-      <div className="bg-customColor1 mt-20 h-[75vh] w-screen fixed z-10 flex flex-col justify-center items-center">
+      <div className="bg-customColor1 mt-10 h-[75vh] w-screen fixed z-10 flex flex-col justify-center items-center">
         <div className=" h-48 font-josefin relative flex items-end select-none">
-          <div className="text-[18rem]  text-customColor2 opacity-40 -z-10 leading-[13rem] absolute top-0">
+          <div className="text-[18rem] text-customColor2 opacity-40 -z-10 leading-[13rem] absolute top-0">
             Y
           </div>
-          <div className="w-[935px]  z-10 text-6xl text-center  text-customColor2">
+          <div className="w-96 md:w-[550px] lg:w-[935px] z-10 text-4xl md:text-5xl lg:text-6xl text-center  text-customColor2">
             Your gateway to
             <span>{animatedSvg("BLOGTIDE")}</span>
-            <br />
+            
             Explore, Learn, and Engage
           </div>
         </div>
@@ -38,9 +38,9 @@ const HomePage = () => {
           <Button2 buttonContent={"Start Writing Now"} />
         </div>
       </div>
-      <div className=" bg-customColor2 w-screen mt-[95vh] z-20">
-        <div className="-mt-36 mb-36 w-[80vw] mx-auto py-20 z-20 bg-customColor3">
-          <div className="text-3xl mt-5 text-center text-customColor1 font-serif">
+      <div className=" bg-customColor2 w-screen mt-[80vh] lg:mt-[90vh] z-20">
+        <div className="-mt-36 mb-36 md:w-[90vw] lg:w-[80vw] mx-auto py-20 z-20 bg-customColor3">
+          <div className="text-xl lg:text-3xl mt-5 text-center text-customColor1 font-serif">
             <button
               className={`mx-8 transition-all border-b-4  ${
                 isExplore ? " border-customColor1" : "border-customColor2"

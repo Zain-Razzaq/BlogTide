@@ -108,12 +108,12 @@ export const animatedSvg = (content) => {
         svg text {
           animation: stroke 6.5s infinite alternate;
           stroke-width: 2;
-          stroke: #dac0a3;
+          stroke: #B6C4B6;
         }
         @keyframes stroke {
           0% {
             fill: none;
-            stroke: #dac0a3;
+            stroke: #B6C4B6;
             stroke-dashoffset: 25%;
             stroke-dasharray: 0 50%;
             stroke-width: 2;
@@ -121,17 +121,17 @@ export const animatedSvg = (content) => {
           70% {
             fill: none;
 
-            stroke: #dac0a3;
+            stroke: #B6C4B6;
           }
           80% {
             fill: none;
 
-            stroke: #dac0a3;
+            stroke: #B6C4B6;
             stroke-width: 3;
           }
           100% {
-            fill: #dac0a3;
-            stroke: #dac0a3;
+            fill: #B6C4B6;
+            stroke: #B6C4B6;
             stroke-dashoffset: -25%;
             stroke-dasharray: 50% 0;
             stroke-width: 0;

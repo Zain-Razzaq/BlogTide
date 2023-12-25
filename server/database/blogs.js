@@ -64,10 +64,11 @@ export const searchBlogsInDatabase = async (searchQuery, skip, limit) => {
   const blogs = await BlogModel.find({
     title: { $regex: searchQuery, $options: "i" },
   })
+    .populate("author", "name")
     .sort({ updatedAt: -1 })
     .skip(skip)
     .limit(limit);
-  const totalBlogs = BlogModel.countDocuments({
+  const totalBlogs = await BlogModel.countDocuments({
     title: { $regex: searchQuery, $options: "i" },
   });
   return { blogs, totalBlogs };
