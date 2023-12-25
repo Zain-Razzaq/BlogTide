@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, generatePath } from "react-router-dom";
 
-import { useSearchBlogsQuery } from "../../store/api/blogsApi";
+import { useLazySearchBlogsQuery } from "../../store/api/blogsApi";
 import { HOME_PAGE_URL, SEARCH_BLOGS_URL } from "../../routes";
 import SearchBar from "../../components/SearchBar";
 import BlogCard from "../../components/BlogCard";
@@ -13,18 +13,12 @@ const SearchBlogsPage = () => {
   const navigate = useNavigate();
   const [pageNumber, setPageNumber] = useState(0);
   const { searchQuery } = useParams();
-  const {
-    data: { blogs, currentPage, totalPages } = {},
-    error,
-    isLoading,
-  } = useSearchBlogsQuery({
-    searchQuery,
-    pageNumber: 0,
-  });
+  const [trigger, { data: { blogs, totalPages } = {}, error, isLoading }] =
+    useLazySearchBlogsQuery({});
 
   useEffect(() => {
-    if (currentPage) setPageNumber(currentPage);
-  }, [currentPage]);
+    trigger({ searchQuery, pageNumber });
+  }, [pageNumber, searchQuery, trigger]);
 
   const handelSearchFormSubmit = ({ searchQuery }) =>
     navigate(generatePath(SEARCH_BLOGS_URL, { searchQuery }));

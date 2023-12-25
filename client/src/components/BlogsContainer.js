@@ -14,15 +14,17 @@ import SearchBar from "./SearchBar";
 
 const BlogsContainer = ({ isExplore }) => {
   const navigate = useNavigate();
-  const [trigger, { data: { blogs, currentPage, totalPages } = {}, error, isLoading }] =
-    useLazyGetBlogsQuery();
+  const [
+    trigger,
+    { data: { blogs, currentPage, totalPages } = {}, error, isLoading },
+  ] = useLazyGetBlogsQuery();
   const [pageNumber, setPageNumber] = useState(0);
 
   const blogURL = isExplore ? getExploreBlogsURL() : getCurrentUserBlogsURL();
 
   useEffect(() => {
     trigger({ blogURL, pageNumber });
-    setPageNumber(currentPage);
+    // setPageNumber(currentPage);
   }, [blogURL, currentPage, isExplore, pageNumber, trigger]);
 
   useEffect(() => setPageNumber(0), [isExplore]);
@@ -41,16 +43,24 @@ const BlogsContainer = ({ isExplore }) => {
           ) : (
             <>
               <SearchBar handelFormSubmit={handelSearchFormSubmit} />
-              {blogs?.map(({ _id, title, content, author, readTime }) => (
-                <BlogCard
-                  key={_id}
-                  id={_id}
-                  title={title}
-                  content={content}
-                  author={author.name}
-                  readTime={readTime}
-                />
-              ))}
+              {blogs?.length ? (
+                <>
+                  {blogs?.map(({ _id, title, content, author, readTime }) => (
+                    <BlogCard
+                      key={_id}
+                      id={_id}
+                      title={title}
+                      content={content}
+                      author={author.name}
+                      readTime={readTime}
+                    />
+                  ))}
+                </>
+              ) : (
+                <div className="text-xl my-5 flex justify-center">
+                  No Blogs Found
+                </div>
+              )}
               {blogs && (
                 <PageNavigator
                   page={pageNumber}

@@ -14,7 +14,7 @@ export const getBlogsForHomePage = async (req, res) => {
   try {
     const currentUser = tokenValidation(req.cookies?.userToken);
     if (currentUser) {
-      const currentPage = req.params.currentPage || 0;
+      const currentPage = req.params.pageNumber || 0;
       const limit = req.params.limit || 10;
       const skip = currentPage * limit;
 
@@ -32,7 +32,7 @@ export const getBlogsForCurrentUser = async (req, res) => {
   try {
     const currentUser = tokenValidation(req.cookies?.userToken);
     if (currentUser) {
-      const currentPage = req.params.currentPage || 0;
+      const currentPage = req.params.pageNumber || 0;
       const limit = req.params.limit || 10;
       const skip = currentPage * limit;
 
@@ -71,7 +71,9 @@ export const searchBlogs = async (req, res) => {
   try {
     const currentUser = tokenValidation(req.cookies?.userToken);
     if (currentUser) {
-      const { searchQuery, currentPage, limit } = req.query;
+      let { searchQuery, pageNumber, limit } = req.query;
+      const currentPage = pageNumber || 0;
+      limit = limit || 10;
       const skip = currentPage * limit;
 
       const { blogs, totalBlogs } = await searchBlogsInDatabase(

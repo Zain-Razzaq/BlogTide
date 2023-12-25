@@ -92,5 +92,5 @@ export const {
   useCreateNewBlogMutation,
   useDeleteBlogMutation,
   useUpdateBlogMutation,
-  useSearchBlogsQuery,
+  useLazySearchBlogsQuery,
 } = blogsApi;
