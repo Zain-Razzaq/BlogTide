@@ -12,7 +12,7 @@ import {
 
 export const getBlogsForHomePage = async (req, res) => {
   try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
+    const currentUser = tokenValidation(req,res);
     if (currentUser) {
       const currentPage = req.params.pageNumber || 0;
       const limit = req.params.limit || 10;
@@ -30,7 +30,7 @@ export const getBlogsForHomePage = async (req, res) => {
 
 export const getBlogsForCurrentUser = async (req, res) => {
   try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
+    const currentUser = tokenValidation(req,res);
     if (currentUser) {
       const currentPage = req.params.pageNumber || 0;
       const limit = req.params.limit || 10;
@@ -51,7 +51,7 @@ export const getBlogsForCurrentUser = async (req, res) => {
 
 export const getBlogById = async (req, res) => {
   try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
+    const currentUser = tokenValidation(req,res);
     if (currentUser) {
       const { blogId } = req.params;
       const blog = await getBlogDataById(blogId);
@@ -69,7 +69,7 @@ export const getBlogById = async (req, res) => {
 
 export const searchBlogs = async (req, res) => {
   try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
+    const currentUser = tokenValidation(req,res);
     if (currentUser) {
       let { searchQuery, pageNumber, limit } = req.query;
       const currentPage = pageNumber || 0;
@@ -93,7 +93,7 @@ export const searchBlogs = async (req, res) => {
 
 export const createBlog = async (req, res) => {
   try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
+    const currentUser = tokenValidation(req,res);
     if (currentUser) {
       const { title, content, readTime } = req.body;
 
@@ -114,7 +114,7 @@ export const createBlog = async (req, res) => {
 
 export const deleteBlog = async (req, res) => {
   try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
+    const currentUser = tokenValidation(req,res);
     if (currentUser) {
       const { blogId } = req.params;
       const writterId = await getBlogAuthorByBlogId(blogId);
@@ -131,7 +131,7 @@ export const deleteBlog = async (req, res) => {
 
 export const updateBlog = async (req, res) => {
   try {
-    const currentUser = tokenValidation(req.cookies?.userToken);
+    const currentUser = tokenValidation(req,res);
     if (currentUser) {
       const { blogId } = req.params;
       const writterId = await getBlogAuthorByBlogId(blogId);

@@ -64,6 +64,7 @@ const LoginPage = () => {
               }),
             }}
             placeholder={"Password"}
+            textType="password"
             error={errors.password}
           />
           <span className=" text-blue-700 font-bold text-sm cursor-pointer">

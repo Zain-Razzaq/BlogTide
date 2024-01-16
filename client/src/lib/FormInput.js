@@ -1,10 +1,16 @@
-const FormInput = ({ inputProp, placeholder, error, value = "" }) => {
+const FormInput = ({
+  inputProp,
+  placeholder,
+  error,
+  value = "",
+  textType = "text",
+}) => {
   return (
     <div className="felx flex-col">
       <input
         {...inputProp}
         placeholder={placeholder}
-        type="text"
+        type={textType}
         defaultValue={value}
         className="border-2 outline-none rounded-md h-12 my-2 p-2 w-full focus:border-customColor1"
       />

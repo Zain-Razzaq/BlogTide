@@ -32,13 +32,26 @@ export const register = async (req, res) => {
       { id: user.id, isAdmin: user.role === "admin" },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "20m",
+      }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user.id, isAdmin: user.role === "admin" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h",
       }
     );
 
     res.cookie("userToken", JWTToken, {
       httpOnly: true,
       maxAge: 3600000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.status(200).send({
@@ -70,7 +83,15 @@ export const login = async (req, res) => {
       { id: user.id, isAdmin: user.role === "admin" },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "20m",
+      }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user.id, isAdmin: user.role === "admin" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "24h",
       }
     );
 
@@ -78,6 +99,11 @@ export const login = async (req, res) => {
       httpOnly: true,
       maxAge: 3600000,
     });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       userId: user._id,
       name: user.name,
@@ -93,6 +119,7 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
   try {
     res.cookie("userToken", "", { maxAge: 1 });
+    res.cookie("refreshToken", "", { maxAge: 1 });
     res.status(200).send({ message: "User logged out successfully" });
   } catch (error) {
     res.status(500).send({ message: error.message });

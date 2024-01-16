@@ -73,6 +73,7 @@ const SignupPage = () => {
               }),
             }}
             placeholder={"Password"}
+            textType="password"
             error={errors.password}
           />
           <div className="flex justify-between items-center mt-10">
