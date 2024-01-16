@@ -16,6 +16,7 @@ const HomePage = () => {
   useEffect(() => {
     if (error) {
       toast.error(error);
+      localStorage.removeItem("userInfo");
       navigate(ROOT_URL);
     }
   }, [error, navigate]);

@@ -12,7 +12,7 @@ const BlogCard = ({ id, title, content, author, readTime }) => {
         <span className="text-[10rem] lg:text-[14rem] opacity-40 leading-[8rem] absolute top-0 -left-5 lg:-left-16">
           {title && title[0]}
         </span>
-        <h2 className=" text-2xl md:text-3xl lg:text-5xl  font-lora font-semibold line-clamp-3">
+        <h2 className=" text-2xl md:text-3xl lg:text-5xl font-lora font-semibold line-clamp-3">
           {title}
         </h2>
       </div>

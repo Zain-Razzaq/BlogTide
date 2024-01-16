@@ -9,8 +9,7 @@ import { Button1 } from "../../lib/SubmitButtons";
 import { useEffect } from "react";
 
 const SignupPage = () => {
-  const [registerNewUser, { data, error, isLoading }] =
-    useRegisterNewUserMutation();
+  const [registerNewUser, { isLoading }] = useRegisterNewUserMutation();
   const navigate = useNavigate();
   const {
     register,

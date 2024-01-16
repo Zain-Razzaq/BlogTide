@@ -25,7 +25,7 @@ const SearchBlogsPage = () => {
 
   return (
     <div className="pt-32">
-      <div className="w-[85vw] mx-auto py-20 px-24 z-20 bg-customColor3 text-customColor1">
+      <div className=" md:w-[85vw] mx-auto py-20 px-10 md:px-24 z-20 bg-customColor3 text-customColor1">
         <div className="flex items-center my-5">
           <div onClick={() => navigate(HOME_PAGE_URL)}>{homeSvg()}</div>
           <div className="w-full">
